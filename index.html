@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="CSS/Estilos.css">
+    <title>Portal de Configuracion</title>
+  
+    <meta name=Description content="Muestra los tipos de enlaces que podemos usar" />
+    <meta http-equiv=Content-Language content=es/>
+    <meta name=distribution content=global/>
+    <meta name="Robots" content="all"/>
+
+</head>
+<style>
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; }
+
+.contenedor {
+  width: 90%;
+  margin: 0 auto; }
+  .contenedor .titulo {
+    color: #AF0F0F;
+    width: 100%;
+    text-align: center;
+    border-bottom: 1px solid #000;
+    line-height: 0.1em;
+    margin-top: 30px; }
+    .contenedor .titulo span {
+      background: #fff;
+      padding: 0 10px; }
+  .contenedor .formulario {
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    padding: 30px;
+    width: 70%;
+    border: 3px double #AF0F0F;
+    margin-top: 30px; }
+    .contenedor .formulario form {
+      width: 50%; }
+      .contenedor .formulario form .seccion {
+        padding: 10px 0; }
+        .contenedor .formulario form .seccion hr {
+          margin-bottom: 10px;
+          color: #AF0F0F; }
+        .contenedor .formulario form .seccion .campo {
+          display: flex;
+          justify-content: space-between; }
+          .contenedor .formulario form .seccion .campo .texto {
+            margin: 5px 0;
+            padding: 3px 7px; }
+      .contenedor .formulario form .botones {
+        margin-top: 15px;
+        display: flex;
+        justify-content: space-around; }
+        .contenedor .formulario form .botones input {
+          display: none; }
+      .contenedor .formulario form .botones + label {
+        background: #AF0F0F;
+        padding: 10px 20px;
+        color: #FFF;
+        cursor: pointer;
+        transition: all ease 0.4s; }
+        .contenedor .formulario form .botones + label:hover {
+          background: #490606; }
+
+@media (max-width: 950px) {
+  .contenedor {
+    width: 100%; }
+    .contenedor .titulo {
+      color: #AF0F0F;
+      width: 100%;
+      border-bottom: none; }
+    .contenedor .formulario {
+      width: 90%; } }
+@media (max-width: 650px) {
+  .contenedor .titulo {
+    text-align: left; }
+  .contenedor .formulario {
+    margin-top: 0px;
+    border: none;
+    width: 100%; }
+    .contenedor .formulario form {
+      width: 80%; }
+      .contenedor .formulario form .seccion .campo {
+        padding: 5px 10px; } }
+@media (max-width: 415px) {
+  .contenedor {
+    width: 100%; }
+    .contenedor .formulario form {
+      width: 100%; } }
+
+/*# sourceMappingURL=Estilos.css.map */
+
+
+
+</style>
+
+
+
+<body>
+    <div class="contenedor">
+        <h1 class="titulo"><span>CONFIGURACIÓN</span></h1>
+
+        <div class="formulario">
+
+
+            <form action="Comprobar.php" method = "POST">
+
+                <section class = "seccion">
+                    <h2>Configuracion de AP</h2>
+                    <hr>
+                    <div class="campo">
+                        <label for="ssid_ap">SSID:</label>
+                        <input class = "texto" type="text" name="ssid_ap" id = "ssid_ap" maxlength="20" placeholder="SSID_AP">
+                    </div>
+
+                    <div class="campo">
+                        <label for="password_ap">Password:</label>
+                        <input placeholder = "Password" type="password" class = "texto" id = "password_ap" name="password_ap">
+                    </div>
+                </section>
+
+
+
+
+                <section class = "seccion">
+                    <h2>Configuracion de WiFi</h2>
+                    <hr>
+                    <div class="campo">
+                        <label for="ssid_wifi">SSID:</label>
+                        <input class = "texto" type="text" name="ssid_wifi" id = "ssid_wifi" maxlength="20" placeholder="SSID_WiFi">
+                    </div>
+
+                    <div class="campo">
+                        <label for="password_wifi">Password:</label>
+                        <input placeholder = "Password" class = "texto" type="password" id = "password_wifi" name="password_wifi">
+                    </div>
+                </section>
+
+
+
+                <section class = "seccion">
+                    <h2>Configuracion de MQTT</h2>
+                    <hr>
+                    <div class="campo">
+                        <label for="mqtt_server">MQTT Server:</label>
+                        <input class = "texto" type="text" name="mqtt_server" id = "mqtt_server" maxlength="20" placeholder="Servidor MQTT">
+                    </div>
+
+                    <div class="campo">
+                        <label for="id_client">ID Cliente:</label>
+                        <input class = "texto" type="text" id = "id_client" name="id_client" placeholder = "esp8266_01">
+                    </div>
+
+                    <div class="campo">
+                        <label for="topic_sub_01">Topic Sub:</label>
+                        <input class = "texto" type="text" id = "topic_sub_01" name="topic_sub_01" placeholder = "topic_sub">
+                    </div>
+
+                    <div class="campo">
+                        <label for="topic_pub_01">Topic Pub:</label>
+                        <input class = "texto" type="text" id = "topic_pub_01" name="topic_pub_01" placeholder = "topic_pub">
+                    </div>
+                </section>
+
+                <div class="botones">
+                    
+                    <input type="submit" name = "aplicar" id = "aplicar" class="botones">
+                    <label for="aplicar">Aplicar</label>
+                    
+                    <input type="Reset" name = "resetear" id = "resetear" class="botones">
+                    <label for="resetear">Resetear</label>
+                </div>
+                
+
+
+            </form>
+
+
+        </div>
+        
+    </div>
+</body>
+</html>
