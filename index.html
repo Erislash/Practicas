@@ -36,17 +36,37 @@
       padding: 0 10px; }
   .contenedor .formulario {
     overflow: hidden;
-    margin: 0 auto;
+    margin: 20px auto;
     display: flex;
     justify-content: center;
     padding: 30px;
     width: 70%;
     border: 3px double #AF0F0F;
-    margin-top: 30px; }
+     }
     .contenedor .formulario form {
       width: 50%; }
       .contenedor .formulario form .seccion {
         padding: 10px 0; }
+        .contenedor .formulario form .selector-ip
+        {
+          display: flex;
+          padding: 10px;
+          justify-content: space-around;
+        }
+        .contenedor .formulario form .selector-ip input{
+          display: none;
+        }
+        
+        .contenedor .formulario form .selector-ip label{
+          background: rgb(231, 12, 12);
+          color: #FFF;
+          padding: 10px 20px;
+          cursor: pointer;
+        }
+        .contenedor .formulario form .selector-ip input[type="radio"]:checked + label{
+          background: rgb(70, 8, 8);
+        }
+        
         .contenedor .formulario form .seccion hr {
           margin-bottom: 10px;
           color: #AF0F0F; }
@@ -58,6 +78,7 @@
             
             margin: 5px 0;
             padding: 3px 7px; }
+            
       .contenedor .formulario form .botones {
         margin-top: 15px;
         display: flex;
@@ -128,60 +149,94 @@
             <form action="Comprobar.php" method = "POST">
 
                 <section class = "seccion">
-                    <h2>Configuracion de AP</h2>
+                    <h2>Configuracion WiFi</h2>
                     <hr>
                     <div class="campo">
                         <label for="ssid_ap">SSID:</label>
-                        <input class = "texto" type="text" name="ssid_ap" id = "ssid_ap" maxlength="20" placeholder="SSID_AP">
+                        <input class = "texto" type="text" name="ssid_ap" id = "ssid_ap" maxlength="20" placeholder="SSID">
                     </div>
 
                     <div class="campo">
-                        <label for="password_ap">Password:</label>
-                        <input placeholder = "Password" type="password" class = "texto" id = "password_ap" name="password_ap">
+                        <label for="password_ap">Contraseña:</label>
+                        <input placeholder = "Contraseña" type="password" class = "texto" id = "password_ap" name="password_ap">
                     </div>
+
+                    <div class="selector-ip" id="selector">
+                        <input type="radio" name="ip" value="dinamica" id="dinamica" checked>
+                        <label for="dinamica">Dinamica</label>
+                        
+                        <input type="radio" name="ip" value="estatica" id="estatica">
+                        <label for="estatica">Estatica</label>
+                    </div>
+                    <article class = "seccion estatico" id="estatico">
+                      <div class="campo">
+                        <label for="ip_est">IP:</label>
+                        <input class = "texto" type="text" name="ip_est" id = "ip_est" maxlength="20" placeholder="Usuario">
+                      </div>
+                      <div class="campo">
+                        <label for="mascara_est">Máscara:</label>
+                        <input class = "texto" type="text" name="mascara_est" id = "mascara_est" maxlength="20" placeholder="Máscara">
+                      </div>
+                      <div class="campo">
+                        <label for="puerta_est">Puerta De Enlace:</label>
+                        <input class = "texto" type="text" name="puerta_est" id = "puerta_est" maxlength="20" placeholder="Puerta de enlace">
+                      </div>
+                      <div class="campo">
+                        <label for="dns_est">DNS:</label>
+                        <input class = "texto" type="text" name="dns_est" id = "dns_est" maxlength="20" placeholder="DNS">
+                      </div>
+                    </article>
+
+
                 </section>
 
 
 
 
+
                 <section class = "seccion">
-                    <h2>Configuracion de WiFi</h2>
+                    <h2>Administrador</h2>
                     <hr>
                     <div class="campo">
-                        <label for="ssid_wifi">SSID:</label>
-                        <input class = "texto" type="text" name="ssid_wifi" id = "ssid_wifi" maxlength="20" placeholder="SSID_WiFi">
+                        <label for="usuario_web">Usuario:</label>
+                        <input class = "texto" type="text" name="usuario_web" id = "usuario_web" maxlength="20" placeholder="Usuario">
                     </div>
 
                     <div class="campo">
-                        <label for="password_wifi">Password:</label>
-                        <input placeholder = "Password" class = "texto" type="password" id = "password_wifi" name="password_wifi">
+                        <label for="password_web">Contraseña:</label>
+                        <input placeholder = "Contraseña" class = "texto" type="password" id = "password_web" name="password_web">
                     </div>
                 </section>
 
 
 
                 <section class = "seccion">
-                    <h2>Configuracion de MQTT</h2>
+                    <h2>Broker MQTT</h2>
                     <hr>
                     <div class="campo">
-                        <label for="mqtt_server">MQTT Server:</label>
+                        <label for="mqtt_server">Nombre de IP o Servidor:</label>
                         <input class = "texto" type="text" name="mqtt_server" id = "mqtt_server" maxlength="20" placeholder="Servidor MQTT">
                     </div>
 
                     <div class="campo">
                         <label for="id_client">ID Cliente:</label>
-                        <input class = "texto" type="text" id = "id_client" name="id_client" placeholder = "esp8266_01">
+                        <input class = "texto" type="text" id = "id_client" name="id_client" placeholder = "ID Cliente">
                     </div>
 
                     <div class="campo">
-                        <label for="topic_sub_01">Topic Sub:</label>
-                        <input class = "texto" type="text" id = "topic_sub_01" name="topic_sub_01" placeholder = "topic_sub">
+                        <label for="usuario_mqtt">Usuario</label>
+                        <input class = "texto" type="text" id = "usuario_mqtt" name="usuario_mqtt" placeholder = "Usuario">
                     </div>
 
                     <div class="campo">
-                        <label for="topic_pub_01">Topic Pub:</label>
-                        <input class = "texto" type="text" id = "topic_pub_01" name="topic_pub_01" placeholder = "topic_pub">
+                        <label for="password_mqtt">Contraseña</label>
+                        <input class = "texto" type="password" id = "password_mqtt" name="password_mqtt" placeholder = "Contraseña">
                     </div>
+
+                    <div class="campo">
+                      <label for="prefijo_mqtt">Prefijo Tópicos</label>
+                      <input class = "texto" type="text" id = "prefijo_mqtt" name="prefijo_mqtt" placeholder = "Prefijo Tópicos">
+                  </div>
                 </section>
 
                 <div class="botones">
@@ -202,4 +257,33 @@
         
     </div>
 </body>
+<script>
+  var estatico = document.getElementById('estatico');
+ 
+  var dinamico = document.getElementById('dinamica');
+  var seleccionado = document.getElementById('estatica');
+  estatico.style.display = 'none';
+
+  seleccionado.addEventListener('change', function()
+  {
+    if(seleccionado.checked)
+  {
+    estatico.style.display = 'block';
+  }
+  });
+
+  dinamico.addEventListener('change', function()
+  {
+    if(dinamico.checked)
+  {
+    estatico.style.display = 'none';
+  }
+  });
+
+  
+
+
+</script>
+
+
 </html>
