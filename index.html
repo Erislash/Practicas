@@ -6,12 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="CSS/Estilos.css">
     <title>Portal de Configuracion</title>
-  
-    <meta name=Description content="Muestra los tipos de enlaces que podemos usar" />
-    <meta http-equiv=Content-Language content=es/>
-    <meta name=distribution content=global/>
-    <meta name="Robots" content="all"/>
-
 </head>
 <style>
 
@@ -62,9 +56,11 @@
           color: #FFF;
           padding: 10px 20px;
           cursor: pointer;
+          opacity: 0.5;
         }
         .contenedor .formulario form .selector-ip input[type="radio"]:checked + label{
           background: rgb(70, 8, 8);
+          opacity: 1;
         }
         
         .contenedor .formulario form .seccion hr {
@@ -83,15 +79,15 @@
         margin-top: 15px;
         display: flex;
         justify-content: space-around; }
-        .contenedor .formulario form .botones input {
+        .contenedor .formulario form .botones .boton {
           display: none; }
-      .contenedor .formulario form .botones + label {
+      .contenedor .formulario form .boton + label {
         background: #AF0F0F;
         padding: 10px 20px;
         color: #FFF;
         cursor: pointer;
         transition: all ease 0.4s; }
-        .contenedor .formulario form .botones + label:hover {
+        .contenedor .formulario form .boton + label:hover {
           background: #490606; }
 
 @media (max-width: 950px) {
@@ -146,7 +142,7 @@
         <div class="formulario">
 
 
-            <form action="Comprobar.php" method = "POST">
+            <form action="/" method = "POST">
 
                 <section class = "seccion">
                     <h2>Configuracion WiFi</h2>
@@ -162,16 +158,16 @@
                     </div>
 
                     <div class="selector-ip" id="selector">
-                        <input type="radio" name="ip" value="dinamica" id="dinamica" checked>
-                        <label for="dinamica">Dinamica</label>
+                        <input type="radio" name="ip" value="dinamica" id="btn_dinamica" checked>
+                        <label for="btn_dinamica">Dinamica</label>
                         
-                        <input type="radio" name="ip" value="estatica" id="estatica">
-                        <label for="estatica">Estatica</label>
+                        <input type="radio" name="ip" value="estatica" id="btn_estatica">
+                        <label for="btn_estatica">Estatica</label>
                     </div>
                     <article class = "seccion estatico" id="estatico">
                       <div class="campo">
                         <label for="ip_est">IP:</label>
-                        <input class = "texto" type="text" name="ip_est" id = "ip_est" maxlength="20" placeholder="Usuario">
+                        <input class = "texto" type="text" name="ip_est" id = "ip_est" maxlength="20" placeholder="IP">
                       </div>
                       <div class="campo">
                         <label for="mascara_est">Máscara:</label>
@@ -241,11 +237,11 @@
 
                 <div class="botones">
                     
-                    <input type="submit" name = "aplicar" id = "aplicar" class="botones">
+                    <input type="submit" name = "aplicar" id = "aplicar" class="boton">
                     <label for="aplicar">Aplicar</label>
                     
-                    <input type="Reset" name = "resetear" id = "resetear" class="botones">
-                    <label for="resetear">Resetear</label>
+                    <button name = "resetear" id = "resetear" class="boton">Reestablecer</button>
+                    <label for="resetear">Reestablecer</label>
                 </div>
                 
 
@@ -260,8 +256,8 @@
 <script>
   var estatico = document.getElementById('estatico');
  
-  var dinamico = document.getElementById('dinamica');
-  var seleccionado = document.getElementById('estatica');
+  var dinamico = document.getElementById('btn_dinamica');
+  var seleccionado = document.getElementById('btn_estatica');
   estatico.style.display = 'none';
 
   seleccionado.addEventListener('change', function()
