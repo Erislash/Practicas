@@ -8,7 +8,7 @@ class Pagina{
     public:
         String PConfiguracion();
         String PInicio();
-        String PError(String ph_mensaje);
+        String PMensaje(String ph_mensaje);
 };
 
 #endif
