@@ -8,6 +8,17 @@ String contra = "";           //CONTRASEÑA DE LA RED
 Pagina pag;                           //INICIALIZACIÓN DEL OBJETO PAGINA
 
 
+
+
+
+MDNSResponder mdns;
+
+
+
+
+
+
+
 ESP8266WebServer server(80);          //INICIALIZACION DEL OBJETO SERVIDOR
 String usuario = "Usuario";           //USUARIO PARA ACCEDER A LA PÁGINA DE CONFIGURACIÓN
 String pass = "Usuario";           //CONTRASEÑA PARA ACCEDER
@@ -15,7 +26,7 @@ String pass = "Usuario";           //CONTRASEÑA PARA ACCEDER
 
 
 
-String mensaje = ""; 
+String mensaje = "";                  //VARIABLE DONDE SE GUARDARA EL MENSAJE MOSTRADO LUEGO DE APLICAR CAMBIOS
 
 
 void setup()
@@ -24,27 +35,20 @@ void setup()
   //WiFi.begin(ssid, contra);           //CONECTO A WIFI
 
 
-WiFi.mode(WIFI_AP);
+  WiFi.mode(WIFI_AP);
 
- boolean result = WiFi.softAP("Node", "esp82666");
-  if(result == true)
+  boolean servidor = WiFi.softAP("Node", "esp82666");
+  if(servidor == true)
   {
     IPAddress ipLocal(192,168,4,108);
     IPAddress puertaAcceso(192,168,4,9);
     IPAddress mascaraSubnet(255,255,255,0);
 
     
-    
-
-    
     WiFi.softAPConfig(ipLocal, puertaAcceso, mascaraSubnet);
     Serial.println("\nEL SERVIDOR HA INICIADO");
     Serial.print("Direccion IP = ");
     Serial.println(WiFi.softAPIP());
-    
-
-   
-   
   }
   else
   {
@@ -69,7 +73,21 @@ WiFi.mode(WIFI_AP);
   server.on("/cambioRed", HTTP_POST, Cambio);
   server.onNotFound(NoEncontrado);
 
+
+
+
+  if(mdns.begin("node2073", WiFi.localIP()))
+        Serial.println("DNS ESTABLECIDO");
+      else
+        Serial.println("DNS NO ESTABLECIDO");
+
+
+
+  
   server.begin();                       //INICIO EL SERVIDOR
+
+
+  MDNS.addService("http", "tcp", 80);
   
 }
 
@@ -129,25 +147,8 @@ void CambioAcceso()
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void CambioRed()
 {
-  
-  
     if (!server.hasArg("ssid_ap") || !server.hasArg("password_ap") || server.arg("ssid_ap") == NULL)
     {
       return;
@@ -207,28 +208,15 @@ void CambioRed()
           }
           WiFi.mode(WIFI_AP);
           WiFi.begin(ssid, contra);
-
-          
         }
 
         
-      }else
+      }
+      else
       {
         Serial.println("NO RECIBO RED");
       }
 
-      
-
-
-
-
-
-
-
-
-
-      
-    
 
       Serial.print("\nRE-CONECTANDO");
       int intento = 0;
@@ -245,6 +233,7 @@ void CambioRed()
 //
           Serial.print("\nNo se pudo conectar a la nueva red: ");
           mensaje += "<li>NO SE PUDO CONECTAR A LA RED SELECCIONADA</li>";
+          WiFi.mode(WIFI_AP);
 //
       //    Serial.println("\nRE-CONECTADO A RED ANTERIOR: ");
      //     Serial.println(WiFi.SSID());
@@ -259,25 +248,24 @@ void CambioRed()
       }
       IPAddress gateway;
       IPAddress subnet;
-subnet = WiFi.subnetMask();
-    Serial.print("NETMASK: ");
-    Serial.println(subnet);
+      subnet = WiFi.subnetMask();
+      Serial.print("\nMASCARA: ");
+      Serial.println(subnet);
 
-    gateway = WiFi.gatewayIP();
-  Serial.print("GATEWAY: ");
-  Serial.println(gateway);
+      gateway = WiFi.gatewayIP();
+      Serial.print("PUERTA DE ENLACE: ");
+      Serial.println(gateway);
       
-
       mensaje += "<li>CONECTADO A NUEVA RED: ";
       mensaje += WiFi.SSID();
-       mensaje += "</li>";
+      mensaje += "</li>";
       
       Serial.print("\nConectado a NUEVA red: ");
       Serial.println(WiFi.SSID());
       Serial.print("NUEVA Direccion IP: ");
-      Serial.println(WiFi.localIP());
+      Serial.println(WiFi.localIP());     
     }
-  }
+}
 
 
 void NoEncontrado()
