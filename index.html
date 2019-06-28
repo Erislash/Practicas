@@ -80,6 +80,11 @@
             {
               width: 20%;
               -webkit-appearance: textfield;
+              -moz-appearance:textfield;
+            }
+            .contenedor .formulario form .seccion .campo .sta::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
             }
             .contenedor .formulario form .seccion .est
             {
@@ -154,7 +159,7 @@
         <div class="formulario">
 
 
-            <form action="/" method = "POST">
+            <form action="/cambio" method = "POST">
 
                 <section class = "seccion">
                     <h2>Configuracion de Red WiFi</h2>
@@ -240,10 +245,6 @@
 
                 </section>
 
-
-
-
-
                 <section class = "seccion">
                     <h2>Modificar Usuario de Acceso</h2>
                     <hr>
@@ -257,8 +258,6 @@
                         <input placeholder = "Contraseña" class = "texto" type="password" id = "password_web" name="password_web">
                     </div>
                 </section>
-
-
 
                 <section class = "seccion">
                     <h2>Broker MQTT</h2>
@@ -291,20 +290,17 @@
 
                 <div class="botones">
                     
-                    <input type="submit" name = "aplicar" id = "aplicar" class="boton">
+                    <input type="submit" name = "aplicar" id = "aplicar" class="boton" onclick="this.form.action='/cambio'">
                     <label for="aplicar">Aplicar</label>
                     
-                    <button name = "resetear" id = "resetear" class="boton">Reestablecer</button>
-                    <label for="resetear">Reestablecer</label>
+                    <input type="submit" name = "resetear" id = "resetear" class="boton" onclick="this.form.action='/reset'">
+                    <label for="resetear">Reiniciar</label>
+
+                    <input type="submit" name = "fabrica" id = "fabrica" class="boton" onclick="this.form.action='/restablecer'">
+                    <label for="fabrica">Reestablecer</label>
                 </div>
-                
-
-
             </form>
-
-
         </div>
-        
     </div>
 </body>
 <script>
@@ -329,10 +325,6 @@
     estatico.style.display = 'none';
   }
   });
-
-  
-
-
 </script>
 
 
