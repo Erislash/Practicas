@@ -1,50 +1,31 @@
-#include <ESP8266mDNS.h>
-#include <Pagina.h>                   //LIBRERIA DE LAS WEBS
+#include <PubSubClient.h>             //LIBRERIA PARA COMUNICACION MQTT
+#include <Pagina.h>                   //LIBRERIA DE LAS PAGINAS WEB
 #include <ESP8266WiFi.h>              //LIBRERIAS DEL NODE
-#include <ESP8266WebServer.h>
+#include <ESP8266WebServer.h>         //LIBRERIA PARA SERVIDOR WIFI
 
-String ssid = "TP-LINK_33976C";    //TP-LINK_33976C          //NOMBRE DE LA RED WIFI A CONECTAR
-String contra = "";           //CONTRASEÑA DE LA RED
+
+String ssid = "TP-LINK_33976C";       //NOMBRE DE LA RED WIFI A CONECTAR
+String contra = "";                   //CONTRASEÑA DE LA RED
 Pagina pag;                           //INICIALIZACIÓN DEL OBJETO PAGINA
 
-
-
-
-
-MDNSResponder mdns;
-
-
-
-
-
-
-
-ESP8266WebServer server(80);          //INICIALIZACION DEL OBJETO SERVIDOR
+ESP8266WebServer server(80);          
 String usuario = "Usuario";           //USUARIO PARA ACCEDER A LA PÁGINA DE CONFIGURACIÓN
-String pass = "Usuario";           //CONTRASEÑA PARA ACCEDER
+String pass = "Usuario";              //CONTRASEÑA PARA ACCEDER
 
-
-
-
-String mensaje = "";                  //VARIABLE DONDE SE GUARDARA EL MENSAJE MOSTRADO LUEGO DE APLICAR CAMBIOS
-
+String mensaje = "";                  //MENSAJE A MOSTRAR LUEGO DE APLICAR CAMBIOS
 
 void setup()
 {
-  Serial.begin(115200);               //INICIO EL MONITOR SERIE
-  //WiFi.begin(ssid, contra);           //CONECTO A WIFI
-
-
-  WiFi.mode(WIFI_AP);
-
-  boolean servidor = WiFi.softAP("Node", "esp82666");
+  Serial.begin(115200);                
+  //WiFi.begin(ssid, contra);          
+  WiFi.mode(WIFI_AP);                 //CONFIGURO EL NODE COMO ACCESS POINT(SERVIDOR)
+  boolean servidor = WiFi.softAP("Node", "esp82666");     
   if(servidor == true)
   {
     IPAddress ipLocal(192,168,4,108);
     IPAddress puertaAcceso(192,168,4,9);
     IPAddress mascaraSubnet(255,255,255,0);
 
-    
     WiFi.softAPConfig(ipLocal, puertaAcceso, mascaraSubnet);
     Serial.println("\nEL SERVIDOR HA INICIADO");
     Serial.print("Direccion IP = ");
@@ -54,57 +35,32 @@ void setup()
   {
     Serial.println("\nEL SERVIDOR HA FALLADO");
   }
-
-
-
-  //Serial.print("\nCONECTANDO");
-  //while(WiFi.status() != WL_CONNECTED)  //HASTA QUE NO CONECTE IMPRIMO PUNTOS
-  //{
-   // Serial.print(".");
-   // delay(500);
-  //}
-  //Serial.print("\nConectado a red: ");
- // Serial.println(WiFi.SSID());
- // Serial.print("Direccion IP: ");
- // Serial.println(WiFi.localIP());
-
-  server.on("/", HTTP_GET, Acceso);    //INDICO LA FUNCIÓN A LLAMAR DEPENDIENDO DE LA PÁGINA ACCEDIDA
-  server.on("/entrar", HTTP_POST, Congifuracion);
-  server.on("/cambioRed", HTTP_POST, Cambio);
+  server.on("/", HTTP_GET, Acceso);
+  server.on("/acceder", HTTP_POST, Congifuracion);
+  server.on("/aplicar", HTTP_POST, Cambio);
+  server.on("/reset", HTTP_POST, Reinicio);
   server.onNotFound(NoEncontrado);
-
-
-
-
-  if(mdns.begin("node2073", WiFi.localIP()))
-        Serial.println("DNS ESTABLECIDO");
-      else
-        Serial.println("DNS NO ESTABLECIDO");
-
-
-
   
-  server.begin();                       //INICIO EL SERVIDOR
-
-
-  MDNS.addService("http", "tcp", 80);
-  
+  server.begin();                       
 }
+
 
 void loop()
 {
-  server.handleClient();                  //USO LA FUNCION HANDLECLIENT DE LA CLASE SERVER PARA QUE SE OCUPE DE ADMINISTRAR LAS PÁGINAS
+  server.handleClient();                  
 }
+
 
 void Acceso()
 {
-  //ENVÍO LA PÁGINA DE ACCESO AL SERVIDOR
    server.send(200, "text/html", pag.PInicio().c_str()); 
 }
+
 
 void Congifuracion()
 {
   //COMPRUEBO SI EL ACCESO ES CORRECTO
+  
   if(!server.hasArg("usuario") || !server.hasArg("password") || server.arg("usuario") == NULL || server.arg("password") == NULL)
   {
     server.send(400, "text/html", pag.PMensaje("ACCESO INCOMPLETO"));
@@ -114,17 +70,20 @@ void Congifuracion()
   {
     //SI USUARIO Y CONTRASEÑA SON CORRECTOS, ENVÍO LA PÁGINA DE CONFIGURACIÓN
     server.send(200, "text/html", pag.PConfiguracion().c_str());
-   
-  }else
+  }
+  else
   {
     server.send(401, "text/html", pag.PMensaje("USUARIO O CONTRASEÑA INVÁLIDOS"));
   }
 }
 
+
+//REALIZA LAS COMPROBACIONES DE LOS AJUSTES INTRODUCIDOS Y SI SON CORRECTOS APLICA LOS CAMBIOS
 void Cambio()
 {
   CambioRed();
   CambioAcceso();
+  CambioMQTT();
   server.send(200, "text/html", pag.PMensaje(mensaje).c_str());
   mensaje = "";
 }
@@ -135,15 +94,14 @@ void CambioAcceso()
   if (!server.hasArg("usuario_web") || !server.hasArg("password_web") || server.arg("usuario_web") == NULL || server.arg("password_web") == NULL)
     {
       mensaje += "<li>NO SE MODIFICO EL USUARIO NI CONTRASEÑA<li>";
-      //server.send(200, "text/html", pag.PMensaje("NO SE PUDO MODIFICAR EL USUARIO O CONTRASEÑA"));
       return;
-    }else
+    }
+    else
     {
       usuario = server.arg("usuario_web");
       pass = server.arg("password_web");
       Serial.println("USUARIO Y CONTRASEÑA MODIFICADOS");
       mensaje += "<li>USUARIO Y CONTRASEÑA MODIFICADOS</li>";
-      //server.send(200, "text/html", pag.PMensaje("USUARIO Y CONTRASEÑA MODIFICADOS"));
     }
 }
 
@@ -162,8 +120,6 @@ void CambioRed()
 
       ssid = nSSID;
       contra = ncontra;
-      
-
       
       if(server.arg("ip") == "dinamica")
       {
@@ -184,7 +140,6 @@ void CambioRed()
                 || server.arg("dns_est_1") == NULL || server.arg("dns_est_2") == NULL || server.arg("dns_est_3") == NULL || server.arg("ip_est_4") == NULL
           )
         {
-          
           mensaje += "<li>NO INGRESÓ TODOS LOS DATOS PARA LOGRAR UNA IP ESTÁTICA</li>";
           return;
         }
@@ -194,7 +149,6 @@ void CambioRed()
           IPAddress compuerta(server.arg("puerta_est_1").toInt(), server.arg("puerta_est_2").toInt(), server.arg("puerta_est_3").toInt(), server.arg("puerta_est_4").toInt());   //IP Address of your WiFi Router (Gateway)
           IPAddress mascara(server.arg("mascara_est_1").toInt(), server.arg("mascara_est_2").toInt(), server.arg("mascara_est_3").toInt(), server.arg("mascara_est_4").toInt());  //Subnet mask
           IPAddress dns(server.arg("dns_est_1").toInt(), server.arg("dns_est_2").toInt(), server.arg("dns_est_3").toInt(), server.arg("dns_est_4").toInt());
-          mensaje += "<li>CONFIGURANDO IP ESTÁTICA</li>";
 
           Serial.println(ipEstatica);
           Serial.println(compuerta);
@@ -204,47 +158,31 @@ void CambioRed()
           if(!WiFi.config(ipEstatica, compuerta, mascara, dns))
           {
             Serial.println("NO SE PUDO REALIZAR UNA CONFIGURACIÓN ESTÁTICA");
-            mensaje += "NO SE PUDO REALIZAR UNA CONFIGURACIÓN ESTÁTICA";
+            mensaje += "<li>NO SE PUDO REALIZAR UNA CONFIGURACIÓN ESTÁTICA</li>";
           }
           WiFi.mode(WIFI_AP);
           WiFi.begin(ssid, contra);
         }
-
-        
       }
       else
       {
         Serial.println("NO RECIBO RED");
       }
 
-
       Serial.print("\nRE-CONECTANDO");
       int intento = 0;
-      while(WiFi.status() != WL_CONNECTED)  //HASTA QUE NO CONECTE IMPRIMO PUNTOS
+      while(WiFi.status() != WL_CONNECTED)
       {
-        if((intento > 30) || WiFi.status() == WL_NO_SSID_AVAIL)
+        if((intento > 50) || WiFi.status() == WL_NO_SSID_AVAIL)
         {
-        //  WiFi.begin(ssid, contra);
-        //  while(WiFi.status() != WL_CONNECTED)
-          //{
-      //      Serial.print(".");
-    //        delay(500);
-  //        }
-//
           Serial.print("\nNo se pudo conectar a la nueva red: ");
           mensaje += "<li>NO SE PUDO CONECTAR A LA RED SELECCIONADA</li>";
           WiFi.mode(WIFI_AP);
-//
-      //    Serial.println("\nRE-CONECTADO A RED ANTERIOR: ");
-     //     Serial.println(WiFi.SSID());
-      //    Serial.println(WiFi.localIP());
-      //    server.send(400, "text/html", pag.PMensaje("No se pudo conectar a la red establecida. Conectado A Red anterior"));
           return;
         }
         Serial.print(".");
-        delay(500);
+        delay(100);
         intento++;
-     
       }
       IPAddress gateway;
       IPAddress subnet;
@@ -267,6 +205,28 @@ void CambioRed()
     }
 }
 
+void CambioMQTT()
+{
+  if(!server.hasArg("mqtt_server") || !server.hasArg("id_client") || !server.hasArg("usuario_mqtt") || !server.hasArg("password_mqtt") || !server.hasArg("prefijo_mqtt")
+    || server.arg("mqtt_server") == NULL || server.arg("id_client") == NULL || server.arg("usuario_mqtt") == NULL || server.arg("password_mqtt") == NULL ||
+    server.arg("prefijo_mqtt") == NULL)
+    {
+      Serial.println("NO SE HA MODIFICADO EL BROKER MQTT");
+      mensaje += "<li>NO SE MODIFICÓ EL BROKER MQTT</li>";
+    }
+    else
+    {
+      Serial.println("SE HA MODIFICADO EL BROKER MQTT");
+      mensaje += "<li>SE MODIFICÓ EL BROKER MQTT</li>";
+    }
+}
+
+void Reinicio()
+{
+  Serial.println("REINICIANDO NODE MCU");
+  server.send(200, "text/html", pag.PMensaje("REINICIANDO NODE MCU"));
+  ESP.reset();
+}
 
 void NoEncontrado()
 {
