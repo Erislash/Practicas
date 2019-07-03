@@ -4,52 +4,7 @@
 #include <ESP8266WebServer.h>         //LIBRERIA PARA SERVIDOR WIFI
 #include <EEPROM.h>
 
-struct Acceso
-{
-   char Usuario;
-   char Contrasena;
-};
-
-struct Wifi
-{
-   const char* nombre;
-   const char* contrasena;
-   int ip1;
-   int ip2;
-   int ip3;
-   int ip4;
-   int mascara1;
-   int mascara2;
-   int mascara3;
-   int mascara4;
-   int puerta1;
-   int puerta2;
-   int puerta3;
-   int puerta4;
-   int dns1;
-   int dns2;
-   int dns3;
-   int dns4;
-};
-
-struct Broker
-{
-   char ip;
-   char idCliente;
-   char usuario;
-   char contrasena;
-   char prefijo;
-};
-
-
-
-
-
-
-
-
 Pagina pag;                           //INICIALIZACIÓN DEL OBJETO PAGINA
-
 
 String ssid = "";
 String contra  = "";
@@ -61,8 +16,6 @@ String usuario = "Usuario";           //USUARIO PARA ACCEDER A LA PÁGINA DE CON
 String pass = "Usuario";              //CONTRASEÑA PARA ACCEDER
 
 String mensaje = "";                  //MENSAJE A MOSTRAR LUEGO DE APLICAR CAMBIOS
-
-
 
 void setup()
 {
@@ -120,13 +73,32 @@ void setup()
   }
 }
     Serial.println("INICIADO EN MODO CLIENTE");
-    ssid = Leer(0);
-    contra = Leer(50);
+    ssid = Leer(0, 50);
+    contra = Leer(50, 50);
 
+    WiFi.disconnect();
+    if(Leer(260, 10) == "estatica")
+    {
+      IPAddress ipEstatica((Leer(100, 10).toInt()), (Leer(110, 10).toInt()), (Leer(120, 10).toInt()), (Leer(130, 10).toInt()));
+      IPAddress compuerta((Leer(140, 10).toInt()), (Leer(150, 10).toInt()), (Leer(160, 10).toInt()), (Leer(170, 10).toInt()));
+      IPAddress mascara((Leer(180, 10).toInt()), (Leer(190, 10).toInt()), (Leer(200, 10).toInt()), (Leer(210, 10).toInt()));
+      IPAddress dns((Leer(220, 10).toInt()), (Leer(230, 10).toInt()), (Leer(240, 10).toInt()), (Leer(250, 10).toInt()));
+      
+      Serial.println(ipEstatica);
+      Serial.println(compuerta);
+      Serial.println(mascara);
+      Serial.println(dns);
+
+    if(!WiFi.config(ipEstatica, compuerta, mascara, dns))
+      {
+      Serial.println("NO SE PUDO REALIZAR UNA CONFIGURACIÓN ESTÁTICA");
+      }
+    }
+     
     WiFi.mode(WIFI_STA);
+
     WiFi.begin(ssid, contra);
     
-
     Serial.print("Intentando conectar a red: ");
     Serial.println(ssid);
     Serial.print("Contraseña: ");
@@ -158,9 +130,16 @@ void setup()
       Serial.println(WiFi.localIP());
       digitalWrite(2, LOW);
      }
-     
+      IPAddress gateway;
+      IPAddress subnet;
+      
+      Serial.print("\nMASCARA: ");
+      subnet = WiFi.subnetMask();
+      Serial.println(subnet);
 
-                     
+      gateway = WiFi.gatewayIP();
+      Serial.print("PUERTA DE ENLACE: ");
+      Serial.println(gateway);       
 }
 
 
@@ -203,7 +182,6 @@ void Cambio()
   mensaje = "";
 }
 
-
 void CambioAcceso()
 {
   if (!server.hasArg("usuario_web") || !server.hasArg("password_web") || server.arg("usuario_web") == NULL || server.arg("password_web") == NULL)
@@ -234,15 +212,14 @@ void CambioRed()
       String ncontra = server.arg("password_ap");
       
       
-      Grabar(0, nSSID);
-      Grabar(50, ncontra);
-      
+      Grabar(0, nSSID, 50);
+      Grabar(50, ncontra, 50);
       
       
       if(server.arg("ip") == "dinamica")
       {
         Serial.println("SELECCIONADA RED DINAMICA");
-        WiFi.disconnect();
+        Grabar(260, "dinamica", 10);
       }
       else if(server.arg("ip") == "estatica")
       {
@@ -262,63 +239,34 @@ void CambioRed()
         }
         else
         {
-          IPAddress ipEstatica(server.arg("ip_est_1").toInt(), server.arg("ip_est_2").toInt(), server.arg("ip_est_3").toInt(), server.arg("ip_est_4").toInt()); //ESP static ip
-          IPAddress compuerta(server.arg("puerta_est_1").toInt(), server.arg("puerta_est_2").toInt(), server.arg("puerta_est_3").toInt(), server.arg("puerta_est_4").toInt());   //IP Address of your WiFi Router (Gateway)
-          IPAddress mascara(server.arg("mascara_est_1").toInt(), server.arg("mascara_est_2").toInt(), server.arg("mascara_est_3").toInt(), server.arg("mascara_est_4").toInt());  //Subnet mask
-          IPAddress dns(server.arg("dns_est_1").toInt(), server.arg("dns_est_2").toInt(), server.arg("dns_est_3").toInt(), server.arg("dns_est_4").toInt());
+          String ipEstatica[4] = {server.arg("ip_est_1"), server.arg("ip_est_2"), server.arg("ip_est_3"), server.arg("ip_est_4")};
+          String compuerta[4] = {server.arg("mascara_est_1"), server.arg("mascara_est_2"), server.arg("mascara_est_3"), server.arg("mascara_est_4")};
+          String mascara[4] = {server.arg("puerta_est_1"), server.arg("puerta_est_2"), server.arg("puerta_est_3"), server.arg("puerta_est_4")};
+          String dns[4] = {server.arg("dns_est_1"), server.arg("dns_est_2"), server.arg("dns_est_3"), server.arg("dns_est_4")};
 
-          Serial.println(ipEstatica);
-          Serial.println(compuerta);
-          Serial.println(mascara);
-          Serial.println(dns);
-          WiFi.disconnect();
-          if(!WiFi.config(ipEstatica, compuerta, mascara, dns))
-          {
-            Serial.println("NO SE PUDO REALIZAR UNA CONFIGURACIÓN ESTÁTICA");
-            mensaje += "<li>NO SE PUDO REALIZAR UNA CONFIGURACIÓN ESTÁTICA</li>";
-          }
-          WiFi.mode(WIFI_AP);
-          WiFi.begin(ssid, contra);
+          Grabar(100, ipEstatica[0], 10);
+          Grabar(110, ipEstatica[1], 10);
+          Grabar(120, ipEstatica[2], 10);
+          Grabar(130, ipEstatica[3], 10);
+          Grabar(140, compuerta[0], 10);
+          Grabar(150, compuerta[1], 10);
+          Grabar(160, compuerta[2], 10);
+          Grabar(170, compuerta[3], 10);
+          Grabar(180, mascara[0], 10);
+          Grabar(190, mascara[1], 10);
+          Grabar(200, mascara[2], 10);
+          Grabar(210, mascara[3], 10);
+          Grabar(220, dns[0], 10);
+          Grabar(230, dns[1], 10);
+          Grabar(240, dns[2], 10);
+          Grabar(250, dns[3], 10);
+          Grabar(260, "estatica", 10);
         }
       }
       else
       {
         Serial.println("NO RECIBO RED");
-      }
-
-      //Serial.print("\nRE-CONECTANDO");
-      //int intento = 0;
-      //while(WiFi.status() != WL_CONNECTED)
-      //{
-      //  if((intento > 50) || WiFi.status() == WL_NO_SSID_AVAIL)
-      //  {
-      //    Serial.print("\nNo se pudo conectar a la nueva red: ");
-      //    mensaje += "<li>NO SE PUDO CONECTAR A LA RED SELECCIONADA</li>";
-      //    WiFi.mode(WIFI_AP);
-      //    return;
-      //  }
-      //  Serial.print(".");
-      //  delay(100);
-      //  intento++;
-      //}
-      //IPAddress gateway;
-      //IPAddress subnet;
-      //subnet = WiFi.subnetMask();
-      //Serial.print("\nMASCARA: ");
-      //Serial.println(subnet);
-
-      //gateway = WiFi.gatewayIP();
-      //Serial.print("PUERTA DE ENLACE: ");
-      //Serial.println(gateway);
-      
-      //mensaje += "<li>CONECTADO A NUEVA RED: ";
-     // mensaje += WiFi.SSID();
-     // mensaje += "</li>";
-      
-      //Serial.print("\nConectado a NUEVA red: ");
-      //Serial.println(WiFi.SSID());
-      //Serial.print("NUEVA Direccion IP: ");
-      //Serial.println(WiFi.localIP());     
+      }    
     }
 }
 
@@ -345,26 +293,32 @@ void Reinicio()
   ESP.restart();
 }
 
-
-void Grabar(int dir, String dato)
+//GRABA EN LA EEPROM.
+//dir: posicion de memoria.
+//dato: dato que se quiera guardar
+//uso: bits de uso que se le asignan
+void Grabar(int dir, String dato, int uso)
 {
   int espacio = dato.length(); 
-  char almac[50]; 
+  char almac[uso]; 
   dato.toCharArray(almac, espacio+1);
   for (int i = 0; i < espacio; i++) {
     EEPROM.write(dir+i, almac[i]);
   }
-  for (int i = espacio; i < 50; i++) {
+  for (int i = espacio; i < uso; i++) {
     EEPROM.write(dir+i, 255);
   }
   EEPROM.commit();
 }
 
-String Leer(int dir)
+//LEE LA EEPROM.
+//dir: posicion de memoria.
+//uso: bits que se le asignaron en la grabacion
+String Leer(int dir, int uso)
 {
    byte dato;
    String datoString;
-   for (int i = dir; i < dir+50; i++) {
+   for (int i = dir; i < dir+uso; i++) {
       dato = EEPROM.read(i);
       if (dato != 255) {
         datoString += (char)dato;
@@ -372,17 +326,6 @@ String Leer(int dir)
    }
    return datoString;
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 void NoEncontrado()
