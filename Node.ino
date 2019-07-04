@@ -73,16 +73,20 @@ void setup()
   }
 }
     Serial.println("INICIADO EN MODO CLIENTE");
-    ssid = Leer(0, 50);
-    contra = Leer(50, 50);
+    ssid = Leer(0);
+    contra = Leer(50);
 
     WiFi.disconnect();
-    if(Leer(260, 10) == "estatica")
+    
+    if(Leer(420) == "estatica")
     {
-      IPAddress ipEstatica((Leer(100, 10).toInt()), (Leer(110, 10).toInt()), (Leer(120, 10).toInt()), (Leer(130, 10).toInt()));
-      IPAddress compuerta((Leer(140, 10).toInt()), (Leer(150, 10).toInt()), (Leer(160, 10).toInt()), (Leer(170, 10).toInt()));
-      IPAddress mascara((Leer(180, 10).toInt()), (Leer(190, 10).toInt()), (Leer(200, 10).toInt()), (Leer(210, 10).toInt()));
-      IPAddress dns((Leer(220, 10).toInt()), (Leer(230, 10).toInt()), (Leer(240, 10).toInt()), (Leer(250, 10).toInt()));
+      Serial.println("RED ESTATICA CONFIGURADA");
+      
+      
+      IPAddress ipEstatica(Leer(100).toInt(), Leer(120).toInt(), Leer(140).toInt(), Leer(160).toInt());
+      IPAddress compuerta((Leer(180).toInt()), (Leer(200).toInt()), (Leer(220).toInt()), (Leer(240).toInt()));
+      IPAddress mascara((Leer(260).toInt()), (Leer(280).toInt()), (Leer(300).toInt()), (Leer(320).toInt()));
+      IPAddress dns((Leer(340).toInt()), (Leer(360).toInt()), (Leer(380).toInt()), (Leer(400).toInt()));
       
       Serial.println(ipEstatica);
       Serial.println(compuerta);
@@ -92,9 +96,15 @@ void setup()
     if(!WiFi.config(ipEstatica, compuerta, mascara, dns))
       {
       Serial.println("NO SE PUDO REALIZAR UNA CONFIGURACIÓN ESTÁTICA");
+      }else
+     {
+        Serial.println("SE HIZO UNA CONFIGURACIÓN ESTÁTICA");
       }
+    }else
+    {
+      Serial.println("RED DINAMICA CONFIGURADA");
     }
-     
+    
     WiFi.mode(WIFI_STA);
 
     WiFi.begin(ssid, contra);
@@ -182,21 +192,6 @@ void Cambio()
   mensaje = "";
 }
 
-void CambioAcceso()
-{
-  if (!server.hasArg("usuario_web") || !server.hasArg("password_web") || server.arg("usuario_web") == NULL || server.arg("password_web") == NULL)
-    {
-      mensaje += "<li>NO SE MODIFICO EL USUARIO NI CONTRASEÑA<li>";
-      return;
-    }
-    else
-    {
-      usuario = server.arg("usuario_web");
-      pass = server.arg("password_web");
-      Serial.println("USUARIO Y CONTRASEÑA MODIFICADOS");
-      mensaje += "<li>USUARIO Y CONTRASEÑA MODIFICADOS</li>";
-    }
-}
 
 void CambioRed()
 {
@@ -212,14 +207,14 @@ void CambioRed()
       String ncontra = server.arg("password_ap");
       
       
-      Grabar(0, nSSID, 50);
-      Grabar(50, ncontra, 50);
+      Grabar(0, nSSID);
+      Grabar(50, ncontra);
       
       
       if(server.arg("ip") == "dinamica")
       {
         Serial.println("SELECCIONADA RED DINAMICA");
-        Grabar(260, "dinamica", 10);
+        Grabar(260, "dinamica");
       }
       else if(server.arg("ip") == "estatica")
       {
@@ -244,23 +239,23 @@ void CambioRed()
           String mascara[4] = {server.arg("puerta_est_1"), server.arg("puerta_est_2"), server.arg("puerta_est_3"), server.arg("puerta_est_4")};
           String dns[4] = {server.arg("dns_est_1"), server.arg("dns_est_2"), server.arg("dns_est_3"), server.arg("dns_est_4")};
 
-          Grabar(100, ipEstatica[0], 10);
-          Grabar(110, ipEstatica[1], 10);
-          Grabar(120, ipEstatica[2], 10);
-          Grabar(130, ipEstatica[3], 10);
-          Grabar(140, compuerta[0], 10);
-          Grabar(150, compuerta[1], 10);
-          Grabar(160, compuerta[2], 10);
-          Grabar(170, compuerta[3], 10);
-          Grabar(180, mascara[0], 10);
-          Grabar(190, mascara[1], 10);
-          Grabar(200, mascara[2], 10);
-          Grabar(210, mascara[3], 10);
-          Grabar(220, dns[0], 10);
-          Grabar(230, dns[1], 10);
-          Grabar(240, dns[2], 10);
-          Grabar(250, dns[3], 10);
-          Grabar(260, "estatica", 10);
+          Grabar(100, ipEstatica[0]);
+          Grabar(120, ipEstatica[1]);
+          Grabar(140, ipEstatica[2]);
+          Grabar(160, ipEstatica[3]);
+          Grabar(180, compuerta[0]);
+          Grabar(200, compuerta[1]);
+          Grabar(220, compuerta[2]);
+          Grabar(240, compuerta[3]);
+          Grabar(260, mascara[0]);
+          Grabar(280, mascara[1]);
+          Grabar(300, mascara[2]);
+          Grabar(320, mascara[3]);
+          Grabar(340, dns[0]);
+          Grabar(360, dns[1]);
+          Grabar(380, dns[2]);
+          Grabar(400, dns[3]);
+          Grabar(420, "estatica");
         }
       }
       else
@@ -269,6 +264,23 @@ void CambioRed()
       }    
     }
 }
+
+void CambioAcceso()
+{
+  if (!server.hasArg("usuario_web") || !server.hasArg("password_web") || server.arg("usuario_web") == NULL || server.arg("password_web") == NULL)
+    {
+      mensaje += "<li>NO SE MODIFICO EL USUARIO NI CONTRASEÑA<li>";
+      return;
+    }
+    else
+    {
+      usuario = server.arg("usuario_web");
+      pass = server.arg("password_web");
+      Serial.println("USUARIO Y CONTRASEÑA MODIFICADOS");
+      mensaje += "<li>USUARIO Y CONTRASEÑA MODIFICADOS</li>";
+    }
+}
+
 
 void CambioMQTT()
 {
@@ -297,34 +309,37 @@ void Reinicio()
 //dir: posicion de memoria.
 //dato: dato que se quiera guardar
 //uso: bits de uso que se le asignan
-void Grabar(int dir, String dato, int uso)
+void Grabar(int ph_dir, String ph_dato)  //, int uso)
 {
-  int espacio = dato.length(); 
-  char almac[uso]; 
-  dato.toCharArray(almac, espacio+1);
-  for (int i = 0; i < espacio; i++) {
-    EEPROM.write(dir+i, almac[i]);
-  }
-  for (int i = espacio; i < uso; i++) {
-    EEPROM.write(dir+i, 255);
-  }
+  EEPROM.put(ph_dir, ph_dato);
+  //int espacio = dato.length(); 
+  //char almac[uso]; 
+  //dato.toCharArray(almac, espacio+1);
+  //for (int i = 0; i < espacio; i++) {
+  //  EEPROM.write(dir+i, almac[i]);
+  //}
+  //for (int i = espacio; i < uso; i++) {
+  //  EEPROM.write(dir+i, 255);
+ // }
   EEPROM.commit();
 }
 
 //LEE LA EEPROM.
 //dir: posicion de memoria.
 //uso: bits que se le asignaron en la grabacion
-String Leer(int dir, int uso)
+String Leer(int ph_dir) //, int uso)
 {
-   byte dato;
-   String datoString;
-   for (int i = dir; i < dir+uso; i++) {
-      dato = EEPROM.read(i);
-      if (dato != 255) {
-        datoString += (char)dato;
-      }
-   }
-   return datoString;
+  String dato = "";
+  EEPROM.get(ph_dir, dato);
+  //byte dato;
+   //String datoString;
+   //for (int i = dir; i < dir+uso; i++) {
+   //   dato = EEPROM.read(i);
+  //    if (dato != 255) {
+   //     datoString += (char)dato;
+   //   }
+   //}
+   return dato;
 }
 
 
