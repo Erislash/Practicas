@@ -96,7 +96,8 @@ void setup()
   server.on("/", HTTP_GET, Acceso);
   server.on("/acceder", HTTP_POST, Congifuracion);
   server.on("/aplicar", HTTP_POST, Cambio);
-  server.on("/reset", HTTP_POST, Reinicio);
+  server.on("/reiniciar", HTTP_POST, Reinicio);
+  server.on("/restablecer", HTTP_POST, ReinicioFabrica);
   server.onNotFound(NoEncontrado);
   
   server.begin();  
@@ -425,6 +426,13 @@ void Reinicio()
 {
   Serial.println("REINICIANDO NODE MCU");
   server.send(200, "text/html", pag.PMensaje("REINICIANDO NODE MCU"));
+  ESP.restart();
+}
+
+void ReinicioFabrica()
+{
+  Grabar(0, "0", 254);
+  Serial.println("\n\n////////////////////\nREINICIO DE FÁBRICA\n////////////////////\n\n");
   ESP.restart();
 }
 

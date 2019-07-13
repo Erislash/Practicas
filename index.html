@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="CSS/Estilos.css">
     <title>Portal de Configuracion</title>
 </head>
 <style>
@@ -106,16 +105,49 @@
         margin-top: 15px;
         display: flex;
         justify-content: space-around; }
-        .contenedor .formulario form .botones .boton {
-          display: none; }
-      .contenedor .formulario form .boton + label {
+      .contenedor .formulario form .boton{
         background: #AF0F0F;
         padding: 10px 20px;
         color: #FFF;
         cursor: pointer;
         transition: all ease 0.4s; }
-        .contenedor .formulario form .boton + label:hover {
+        .contenedor .formulario form .boton:hover {
           background: #490606; }
+        .lightBox{
+          border-radius: 10px;
+          color: red;
+          border: 3px solid #AF0F0F;
+          display: flex;
+          flex-direction: column;
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background: #F2F2F2;
+          padding: 30px 70px;
+        }
+        .lightBox p{
+          text-align: center;
+        }
+        .lightBox h3
+        {
+          display: inline-block;
+          text-align: center;
+        }
+        .lightBox .boton-reset{
+          margin-top: 20px;
+          
+          background: #AF0F0F;
+          padding: 10px 20px;
+          color: #FFF;
+          cursor: pointer;
+          transition: all ease 0.4s;
+          text-align: center;
+        }
+        .lightBox .boton-reset:hover
+        {
+          background: #490606;
+        }
 
 @media (max-width: 950px) {
   .contenedor {
@@ -152,8 +184,17 @@
     width: 100%; }
     .contenedor .formulario form {
       width: 100%; } }
-
-
+    
+  
+      .fondo-pop
+      {
+        width: 100%;
+        height: 100%;
+        background: rgb(0, 0, 0);
+        opacity: 0.6;
+        position: fixed;
+        top: 0;
+      }
 
 
 
@@ -163,6 +204,9 @@
 
 
 <body>
+    <div id="light_bg" class="fondo-pop">
+
+    </div>
     <div class="contenedor">
         <h1 class="titulo"><span>CONFIGURACIÓN</span></h1>
 
@@ -187,13 +231,13 @@
                     </div>
 
                     <div class="selector-ip" id="selector">
-                        <input type="radio" name="ip" value="dinamica" id="btn_dinamica" checked>
-                        <label for="btn_dinamica">Dinámica</label>
+                        <input type="radio" name="ip" value="dinamica" id="btn_config_dinamica" checked>
+                        <label for="btn_config_dinamica">Dinámica</label>
                         
-                        <input type="radio" name="ip" value="estatica" id="btn_estatica">
-                        <label for="btn_estatica">Estática</label>
+                        <input type="radio" name="ip" value="estatica" id="btn_config_estatica">
+                        <label for="btn_config_estatica">Estática</label>
                     </div>
-                    <article class = "seccion estatico" id="estatico">
+                    <article class = "seccion config_estatica" id="config_estatica">
                         <label for="ip_est">IP:</label>
                       <div class="campo est">
                         
@@ -308,31 +352,77 @@
 
                 <div class="botones">
                     
-                    <input type="submit" name = "aplicar" id = "aplicar" class="boton" onclick="this.form.action='/aplicar'">
-                    <label for="aplicar">Aplicar</label>
+                    <input type="submit" name = "aplicar" id = "aplicar" style="display: none" onclick="this.form.action='/aplicar'">
+                    <label class="boton" for="aplicar">Aplicar</label>
                     
-                    <input type="submit" name = "resetear" id = "resetear" class="boton" onclick="this.form.action='/reset'">
-                    <label for="resetear">Reiniciar</label>
+                    <div onclick="LightBox('reinicio')" class="boton" id="btn_resetear">Reiniciar</div>
 
-                    <input type="submit" name = "fabrica" id = "fabrica" class="boton" onclick="this.form.action='/restablecer'">
-                    <label for="fabrica">Reestablecer</label>
+                    <div onclick="LightBox('reseteo')" class="boton" for="btn_fabrica">Reestablecer</div>
+                </div>
+
+                <div class="lightBox" id="lightBox">
+                    <h3 id="confirmacion"></h3>
+                    <p>¿Estás Seguro/a?</p>
+                    <input style="display: none" type="submit" name = "resetear" id = "resetear">
+                    <label id = "realizar" for="resetear" class="boton-reset"></label>
+
+                    <div onclick="Cerrar()" id="btn_volver" class="boton-reset">Volver</div>
                 </div>
             </form>
         </div>
     </div>
 </body>
 <script>
-  var estatico = document.getElementById('estatico');
+  var formEstatica = document.getElementById('config_estatica');
  
-  var dinamico = document.getElementById('btn_dinamica');
-  var seleccionado = document.getElementById('btn_estatica');
-  estatico.style.display = 'none';
+  var dinamico = document.getElementById('btn_config_dinamica');
+  var estatico = document.getElementById('btn_config_estatica');
+  formEstatica.style.display = 'none';
 
-  seleccionado.addEventListener('change', function()
+
+  var lightBox = document.getElementById('lightBox');
+  var fondo = document.getElementById('light_bg');
+  var volver = document.getElementById('btn_volver');
+  var confirm = document.getElementById('confirmacion');
+  var resetear =  document.getElementById('resetear');
+  var realizar =  document.getElementById('realizar');
+
+  fondo.style.display = 'none';
+  lightBox.style.display = 'none';
+
+  
+  function Cerrar()
   {
-    if(seleccionado.checked)
+    fondo.style.display = 'none';
+    lightBox.style.display = 'none';
+  }
+
+
+  function LightBox(accion){
+    fondo.style.display = 'block';
+    lightBox.style.display = 'flex';
+
+    if(accion == 'reinicio'){
+      confirmacion.innerHTML = "Está por Reiniciar el ESP8266";
+      resetear.form.action = '/reiniciar';
+      realizar.innerHTML = 'REINICIAR';
+    }
+    else if(accion == 'reseteo'){
+      confirmacion.innerHTML = "Está por REINICIAR DE FÁBRICA el ESP8266";
+      resetear.form.action = '/restablecer';
+      realizar.innerHTML = 'REESTABLECER';
+    }
+  }
+
+
+
+
+
+  estatico.addEventListener('change', function()
   {
-    estatico.style.display = 'block';
+    if(estatico.checked)
+  {
+    formEstatica.style.display = 'block';
   }
   });
 
@@ -340,7 +430,7 @@
   {
     if(dinamico.checked)
   {
-    estatico.style.display = 'none';
+    formEstatica.style.display = 'none';
   }
   });
 </script>
