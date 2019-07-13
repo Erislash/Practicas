@@ -40,6 +40,10 @@
       width: 50%; }
       .contenedor .formulario form .seccion {
         padding: 10px 0; }
+        .contenedor .formulario form .seccion .red{
+          padding: 3px 7px;
+          width: 187px;
+        }
         .contenedor .formulario form .selector-ip
         {
           display: flex;
@@ -222,8 +226,15 @@
                     <hr>
                     <div class="campo">
                         <label for="ssid_ap">SSID:</label>
-                        <input oninput="javascript: if (this.value.length > 15) this.value = this.value.slice(0, 15);" 
-                        class = "texto" type="text" name="ssid_ap" id = "ssid_ap" placeholder="SSID">
+                        <!-- <input oninput="javascript: if (this.value.length > 15) this.value = this.value.slice(0, 15);" 
+                        class = "texto" type="text" name="ssid_ap" id = "ssid_ap" placeholder="SSID"> -->
+
+                        <select id="mySelect" class = "red">
+                          <option value="red1">RED 1</option>
+                          <option value="red2">RED 2</option>
+                          <option value="red3">RED 3</option>
+                          <option value="red4">RED 4</option>
+                        </select>
                     </div>
 
                     <div class="campo">
