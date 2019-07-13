@@ -1,5 +1,6 @@
+#include <Pagina.h>
+
 #include <PubSubClient.h>             //LIBRERIA PARA COMUNICACION MQTT
-#include <Pagina.h>                   //LIBRERIA DE LAS PAGINAS WEB
 #include <ESP8266WiFi.h>              //LIBRERIAS DEL NODE
 #include <ESP8266WebServer.h>         //LIBRERIA PARA SERVIDOR WIFI
 #include <EEPROM.h>
@@ -203,6 +204,11 @@ void setup()
     Serial.println(contraMQTT);
     Serial.println(temaMQTT);
 
+    if(servidorMQTT == NULL || puertoMQTT == NULL || usuarioMQTT == NULL || contraMQTT == NULL || temaMQTT == NULL)
+    {
+      Serial.println("NO HAY DATOS PARA MQTT");
+      return;
+    }
     client.setServer(servidorMQTT.c_str(), puertoMQTT);
     client.setCallback(Llamada);
 
@@ -284,7 +290,18 @@ void Congifuracion()
   {
     
     //SI USUARIO Y CONTRASEÑA SON CORRECTOS, ENVÍO LA PÁGINA DE CONFIGURACIÓN
-    server.send(200, "text/html", pag.PConfiguracion().c_str());
+
+    
+
+    
+    int numeroRedes = WiFi.scanNetworks();
+    String redes[numeroRedes];
+
+    for(int i = 0; i < numeroRedes; i++){
+      redes[i] = WiFi.SSID(i).c_str();
+    }
+    
+    server.send(200, "text/html", pag.PConfiguracion(numeroRedes, redes).c_str());
   }
   else
   {
