@@ -8,211 +8,246 @@
 </head>
 <style>
 
-* {
+*{
   margin: 0;
   padding: 0;
-  box-sizing: border-box; }
+  box-sizing: border-box; 
+}
 
-.contenedor {
+.contenedor{
   overflow: hidden;
   width: 90%;
-  margin: 0 auto; }
-  .contenedor .titulo {
+  margin: 0 auto; 
+}
+.contenedor .titulo{
+  color: #AF0F0F;
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px solid #000;
+  line-height: 0.1em;
+  margin-top: 30px; }
+.contenedor .titulo span{
+  background: #fff;
+  padding: 0 10px;
+}
+.contenedor .formulario{
+  overflow: hidden;
+  margin: 20px auto;
+  display: flex;
+  justify-content: center;
+  padding: 30px;
+  width: 70%;
+  border: 3px double #AF0F0F;
+}
+.contenedor .formulario form{
+  width: 50%; 
+}
+.contenedor .formulario form .seccion{
+  padding: 10px 0; 
+}
+.contenedor .formulario form .seccion .red{
+  padding: 3px 7px;
+  width: 187px;
+}
+.contenedor .formulario form .selector-ip{
+  display: flex;
+  padding: 10px;
+  justify-content: space-around;
+}
+.contenedor .formulario form .selector-ip input{
+  display: none;
+}
+.contenedor .formulario form .selector-ip label{
+  background: rgb(231, 12, 12);
+  color: #FFF;
+  padding: 10px 20px;
+  cursor: pointer;
+  opacity: 0.5;
+ }
+.contenedor .formulario form .selector-ip input[type="radio"]:checked + label{
+  background: rgb(70, 8, 8);
+  opacity: 1;
+}
+        
+.contenedor .formulario form .seccion hr{
+  margin-bottom: 10px;
+  color: #AF0F0F; }
+.contenedor .formulario form .seccion .campo{
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.contenedor .formulario form .seccion .campo .texto{
+  margin: 5px 0;
+  padding: 3px 7px;
+  width: 160px;
+}
+.contenedor .formulario form .seccion .campo .red{
+  width: 160px;
+}
+.contenedor .formulario form .seccion .campo .sta{
+  width: 20%;
+  -webkit-appearance: textfield;
+  -moz-appearance:textfield;
+}
+.contenedor .formulario form .seccion .campo .sta::-webkit-inner-spin-button{
+  -webkit-appearance: none;
+  margin: 0;
+}
+.puerto{
+  -webkit-appearance: textfield;
+  -moz-appearance:textfield;
+  width: 160px;
+}
+.puerto::-webkit-inner-spin-button{
+  -webkit-appearance: none;
+  margin: 0;
+}
+.contenedor .formulario form .seccion .est{
+  display: flex;
+  flex-direction: row;
+}
+.contenedor .formulario form .botones{
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-around;
+}
+.contenedor .formulario form .boton{
+  background: #AF0F0F;
+  padding: 10px 20px;
+  color: #FFF;
+  cursor: pointer;
+  transition: all ease 0.4s
+}
+.contenedor .formulario form .boton:hover{
+  background: #490606;
+}
+.lightBox{
+  border-radius: 10px;
+  color: red;
+  border: 3px solid #AF0F0F;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #F2F2F2;
+  padding: 30px 70px;
+  display: none;
+}
+.lightBox p{
+  text-align: center;
+}
+.lightBox h3{
+  display: inline-block;
+  text-align: center;
+}
+.lightBox .boton-reset{
+  margin-top: 20px;
+  background: #AF0F0F;
+  padding: 10px 20px;
+  color: #FFF;
+  cursor: pointer;
+  transition: all ease 0.4s;
+  text-align: center;
+}
+.lightBox .boton-reset:hover{
+  background: #490606;
+}
+
+@media (max-width: 950px){
+  .contenedor{
+    width: 100%;
+  }
+  .contenedor .titulo{
     color: #AF0F0F;
     width: 100%;
-    text-align: center;
-    border-bottom: 1px solid #000;
-    line-height: 0.1em;
-    margin-top: 30px; }
-    .contenedor .titulo span {
-      background: #fff;
-      padding: 0 10px; }
-  .contenedor .formulario {
-    overflow: hidden;
-    margin: 20px auto;
-    display: flex;
-    justify-content: center;
-    padding: 30px;
-    width: 70%;
-    border: 3px double #AF0F0F;
-     }
-    .contenedor .formulario form {
-      width: 50%; }
-      .contenedor .formulario form .seccion {
-        padding: 10px 0; }
-        .contenedor .formulario form .seccion .red{
-          padding: 3px 7px;
-          width: 187px;
-        }
-        .contenedor .formulario form .selector-ip
-        {
-          display: flex;
-          padding: 10px;
-          justify-content: space-around;
-        }
-        .contenedor .formulario form .selector-ip input{
-          display: none;
-        }
-        
-        .contenedor .formulario form .selector-ip label{
-          background: rgb(231, 12, 12);
-          color: #FFF;
-          padding: 10px 20px;
-          cursor: pointer;
-          opacity: 0.5;
-        }
-        .contenedor .formulario form .selector-ip input[type="radio"]:checked + label{
-          background: rgb(70, 8, 8);
-          opacity: 1;
-        }
-        
-        .contenedor .formulario form .seccion hr {
-          margin-bottom: 10px;
-          color: #AF0F0F; }
-        .contenedor .formulario form .seccion .campo {
-          display: flex;
-          align-items: center;
-          flex-direction: row;
-          justify-content: space-between; }
-          .contenedor .formulario form .seccion .campo .texto{
-            
-            margin: 5px 0;
-            padding: 3px 7px; }
-
-            .sta
-            {
-              width: 20%;
-              -webkit-appearance: textfield;
-              -moz-appearance:textfield;
-            }
-            .sta::-webkit-inner-spin-button {
-                -webkit-appearance: none;
-                margin: 0;
-            }
-            .puerto
-            {
-              -webkit-appearance: textfield;
-              -moz-appearance:textfield;
-            }
-            .puerto::-webkit-inner-spin-button
-            {
-              -webkit-appearance: none;
-                margin: 0;
-            }
-            .contenedor .formulario form .seccion .est
-            {
-              display: flex;
-              flex-direction: row;
-            }
-            
-      .contenedor .formulario form .botones {
-        margin-top: 15px;
-        display: flex;
-        justify-content: space-around; }
-      .contenedor .formulario form .boton{
-        background: #AF0F0F;
-        padding: 10px 20px;
-        color: #FFF;
-        cursor: pointer;
-        transition: all ease 0.4s; }
-        .contenedor .formulario form .boton:hover {
-          background: #490606; }
-        .lightBox{
-          border-radius: 10px;
-          color: red;
-          border: 3px solid #AF0F0F;
-          display: flex;
-          flex-direction: column;
-          position: fixed;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          background: #F2F2F2;
-          padding: 30px 70px;
-          display: none;
-        }
-        .lightBox p{
-          text-align: center;
-        }
-        .lightBox h3
-        {
-          display: inline-block;
-          text-align: center;
-        }
-        .lightBox .boton-reset{
-          margin-top: 20px;
-          
-          background: #AF0F0F;
-          padding: 10px 20px;
-          color: #FFF;
-          cursor: pointer;
-          transition: all ease 0.4s;
-          text-align: center;
-        }
-        .lightBox .boton-reset:hover
-        {
-          background: #490606;
-        }
-
-@media (max-width: 950px) {
-  .contenedor {
-    width: 100%; }
-    .contenedor .titulo {
-      color: #AF0F0F;
-      width: 100%;
-      border-bottom: none; }
-    .contenedor .formulario {
-      width: 90%; } }
-@media (max-width: 650px) {
-  
-
-  .contenedor .titulo {
-    text-align: left; }
-  .contenedor .formulario {
+    border-bottom: none;
+  }
+  .contenedor .formulario{
+    width: 90%;
+  }
+  .contenedor .formulario form .seccion .campo .sta{
+    width: 24%;
+  }
+}
+@media (max-width: 710px){
+  .contenedor .titulo{
+    text-align: left;
+  }
+  .contenedor .formulario{
     margin-top: 0px;
     border: none;
-    width: 100%; }
-    .contenedor .formulario form {
-      width: 80%; }
-      .contenedor .formulario form .seccion h2 {
-        text-align: center; }
-      .contenedor .formulario form .seccion .campo {
-        padding: 5px 10px; } }
+    width: 100%; 
+  }
+  .contenedor .formulario form{
+    width: 80%;
+  }
+  .contenedor .formulario form .seccion h2{
+    text-align: center;
+  }
+  .contenedor .formulario form .seccion .campo{
+    padding: 5px 10px;
+  }
+  .contenedor .formulario form .seccion .campo .sta{
+    width: 24%;
+  }
+}
 @media (max-width: 415px) {
   h2{
     font-size: 20px;
   }
   body{
-    font-size: 11px;
+    font-size: 16px;
   }
   .contenedor {
-    width: 100%; }
-    .contenedor .formulario form {
-      width: 100%; } }
-    
-  
-      .fondo-pop
-      {
-        display: none;
-        width: 100%;
-        height: 100%;
-        background: rgb(0, 0, 0);
-        opacity: 0.6;
-        position: fixed;
-        top: 0;
-      }
-
-
-
-
+    width: 100%;
+  }
+  .contenedor .formulario form {
+    width: 100%; 
+  }
+  .contenedor .formulario form .seccion .campo{
+    flex-direction: column;
+    text-align: center;
+  }
+  .contenedor .formulario form .seccion .campo .red{
+    width: 100%;
+  }
+  .contenedor .formulario form .seccion .campo .texto{
+    width: 100%;
+  }
+  .contenedor .formulario form .seccion .est{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+  }
+  .contenedor .formulario form .seccion .campo .sta{
+    width: 24%;
+  }
+  .contenedor .formulario form .boton{
+    width: 30%;
+    text-align: center;
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+}
+.fondo-pop{
+  display: none;
+  width: 100%;
+  height: 100%;
+  background: rgb(0, 0, 0);
+  opacity: 0.6;
+  position: fixed;
+  top: 0;
+}
 </style>
 
 
-
 <body>
-    <div id="light_bg" class="fondo-pop">
+    <div id="light_bg" class="fondo-pop"></div>
 
-    </div>
     <div class="contenedor">
         <h1 class="titulo"><span>CONFIGURACIÓN</span></h1>
 
@@ -222,7 +257,7 @@
             <form action="/cambio" method = "POST">
 
                 <section class = "seccion">
-                    <h2>Configuracion de Red WiFi</h2>
+                    <h2>Configuración de Red WiFi</h2>
                     <hr>
                     <div class="campo">
                         <label for="ssid_ap">SSID:</label>
@@ -231,7 +266,16 @@
 
                         <select name="ssid_ap" id="ssid_ap" class = "red">
                           <option value="red1">RED 1</option>
+                          <option value="red2">RED 2</option>
+                          <option value="red3">RED 3</option>
+                          <!-- 
+                            CUANDO SE USA EN EL ESP8266...
+                            for(int i = 0; i < ph_cantidadRedes; i++){
+                            html +="<option value=\"" + ph_Red[i] + "\">" + ph_Red[i] + "</option>";
+                          } -->
                         </select>
+
+                        
                     </div>
 
                     <div class="campo">
@@ -330,7 +374,7 @@
                     <h2>Broker MQTT</h2>
                     <hr>
                     <div class="campo">
-                        <label for="mqtt_server">Nombre de IP o Servidor:</label>
+                        <label for="mqtt_server">Servidor:</label>
                         <input oninput="javascript: if (this.value.length > 30) this.value = this.value.slice(0, 30);"
                          class = "texto" type="text" name="mqtt_server" id = "mqtt_server" placeholder="Servidor MQTT">
                     </div>
@@ -367,7 +411,7 @@
                     
                     <div onclick="LightBox('reinicio')" class="boton" id="btn_resetear">Reiniciar</div>
 
-                    <div onclick="LightBox('reseteo')" class="boton" for="btn_fabrica">Reestablecer</div>
+                    <div onclick="LightBox('reseteo')" class="boton" for="btn_fabrica">Restablecer</div>
                 </div>
 
                 <div class="lightBox" id="lightBox">
@@ -420,13 +464,9 @@
     else if(accion == 'reseteo'){
       confirmacion.innerHTML = "Está por REINICIAR DE FÁBRICA el ESP8266";
       resetear.form.action = '/restablecer';
-      realizar.innerHTML = 'REESTABLECER';
+      realizar.innerHTML = 'RESTABLECER';
     }
   }
-
-
-
-
 
   estatico.addEventListener('change', function()
   {

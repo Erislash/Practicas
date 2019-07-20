@@ -45,15 +45,15 @@ void setup()
   
   digitalWrite(led, HIGH);
 
-//SI EL NODE ARRANCA POR PRIMERA VEZ O SE LO RESTABLECE DE FÁBRICA, SE ACCEDE CON EL USUARIO Y CONTRASEÑA POR DEFECTO (Admin, Admin)
+//EL ESP8266 ARRANCARÁ EN MODO SERVIDOR HASTA QUE SE CONFIGURE EL USUARIO Y CONTRASEÑA (POR DEFECTO: admin; admin)
   if(Leer(150, 10) != "Cambiado"){
-    Grabar(120, "Admin", 15);
-    Grabar(135, "Admin", 15);
+    Grabar(120, "admin", 15);
+    Grabar(135, "admin", 15);
   }
   
   usuario = Leer(120, 15);
   passConfig = Leer(135, 15);
-  if(digitalRead(p) == LOW){
+  if(digitalRead(p) == LOW || Leer(150, 10) != "Cambiado"){
     Serial.println("INICIADO EN MODO SERVIDOR");
     digitalWrite(led, LOW);
     delay(100);
@@ -67,7 +67,7 @@ void setup()
     boolean servidor = WiFi.softAP("Node", "esp82666");
 
 //INICIO DEL SERVIDOR Y CONFIGURACIÓN DE SUS PARÁMETROS
-    if(servidor == true){
+    if(servidor == true || Leer(150, 10) != "Cambiado"){
       IPAddress ipLocal(192,168,4,108);
       IPAddress puertaAcceso(192,168,4,9);
       IPAddress mascaraSubnet(255,255,255,0);
@@ -271,67 +271,64 @@ void Cambio()
 
 void CambioRed()
 {
-    if (!server.hasArg("ssid_ap") || !server.hasArg("password_ap") || server.arg("ssid_ap") == NULL){
-      mensaje += "<li>NO SE MODIFICÓ LA RED</li>";
-      return;
+  if (!server.hasArg("ssid_ap") || !server.hasArg("password_ap") || server.arg("ssid_ap") == NULL){
+    mensaje += "<li>NO SE MODIFICÓ LA RED</li>";
+    return;
+  }else if(server.hasArg("ssid_ap") && server.hasArg("password_ap")){
+    Serial.println(server.arg("ip"));
+    
+    String nSSID = server.arg("ssid_ap");
+    String nPassWifi = server.arg("password_ap");
+    
+    Grabar(0, nSSID, 15);
+    Grabar(15, nPassWifi, 15);
+    
+    if(server.arg("ip") == "dinamica"){
+      Serial.println("SELECCIONADA RED DINAMICA");
+      Grabar(110, "dinamica", 10);
     }
-    else if(server.hasArg("ssid_ap") && server.hasArg("password_ap")){
-      Serial.println(server.arg("ip"));
-      
-      String nSSID = server.arg("ssid_ap");
-      String nPassWifi = server.arg("password_ap");
-      
-      Grabar(0, nSSID, 15);
-      Grabar(15, nPassWifi, 15);
-      
-      if(server.arg("ip") == "dinamica"){
-        Serial.println("SELECCIONADA RED DINAMICA");
-        Grabar(110, "dinamica", 10);
-      }
-      else if(server.arg("ip") == "estatica"){
-        Serial.println("SELECCIONADA RED ESTATICA");
-
-        if(!server.hasArg("ip_est_1") || !server.hasArg("ip_est_2") || !server.hasArg("ip_est_3") || !server.hasArg("ip_est_4")
-          || !server.hasArg("mascara_est_1") || !server.hasArg("mascara_est_2") || !server.hasArg("mascara_est_3") || !server.hasArg("mascara_est_4")
-            || !server.hasArg("puerta_est_1") || !server.hasArg("puerta_est_2") || !server.hasArg("puerta_est_3") || !server.hasArg("puerta_est_4")
-              || !server.hasArg("dns_est_1") || !server.hasArg("dns_est_2") || !server.hasArg("dns_est_3") || !server.hasArg("dns_est_4")
-          || server.arg("ip_est_1") == NULL || server.arg("ip_est_2") == NULL || server.arg("ip_est_3") == NULL || server.arg("ip_est_4") == NULL
-            ||  server.arg("mascara_est_1") == NULL || server.arg("mascara_est_2") == NULL || server.arg("mascara_est_3") == NULL || server.arg("mascara_est_4") == NULL
-              || server.arg("puerta_est_1") == NULL || server.arg("puerta_est_2") == NULL || server.arg("puerta_est_3") == NULL || server.arg("puerta_est_4") == NULL
-                || server.arg("dns_est_1") == NULL || server.arg("dns_est_2") == NULL || server.arg("dns_est_3") == NULL || server.arg("ip_est_4") == NULL
-          ){
-          mensaje += "<li>NO INGRESÓ TODOS LOS DATOS PARA LOGRAR UNA IP ESTÁTICA</li>";
-          return;
-        }
-        else{
-          String ipEstatica[4] = {server.arg("ip_est_1"), server.arg("ip_est_2"), server.arg("ip_est_3"), server.arg("ip_est_4")};
-          String compuerta[4] = {server.arg("mascara_est_1"), server.arg("mascara_est_2"), server.arg("mascara_est_3"), server.arg("mascara_est_4")};
-          String mascara[4] = {server.arg("puerta_est_1"), server.arg("puerta_est_2"), server.arg("puerta_est_3"), server.arg("puerta_est_4")};
-          String dns[4] = {server.arg("dns_est_1"), server.arg("dns_est_2"), server.arg("dns_est_3"), server.arg("dns_est_4")};
-
-          Grabar(30, ipEstatica[0], 5);
-          Grabar(35, ipEstatica[1], 5);
-          Grabar(40, ipEstatica[2], 5);
-          Grabar(45, ipEstatica[3], 5);
-          Grabar(50, compuerta[0], 5);
-          Grabar(55, compuerta[1], 5);
-          Grabar(60, compuerta[2], 5);
-          Grabar(65, compuerta[3], 5);
-          Grabar(70, mascara[0], 5);
-          Grabar(75, mascara[1], 5);
-          Grabar(80, mascara[2], 5);
-          Grabar(85, mascara[3], 5);
-          Grabar(90, dns[0], 5);
-          Grabar(95, dns[1], 5);
-          Grabar(100, dns[2], 5);
-          Grabar(105, dns[3], 5);
-          Grabar(110, "estatica", 10);
-        }
+    else if(server.arg("ip") == "estatica"){
+      Serial.println("SELECCIONADA RED ESTATICA");
+      if(!server.hasArg("ip_est_1") || !server.hasArg("ip_est_2") || !server.hasArg("ip_est_3") || !server.hasArg("ip_est_4")
+        || !server.hasArg("mascara_est_1") || !server.hasArg("mascara_est_2") || !server.hasArg("mascara_est_3") || !server.hasArg("mascara_est_4")
+          || !server.hasArg("puerta_est_1") || !server.hasArg("puerta_est_2") || !server.hasArg("puerta_est_3") || !server.hasArg("puerta_est_4")
+            || !server.hasArg("dns_est_1") || !server.hasArg("dns_est_2") || !server.hasArg("dns_est_3") || !server.hasArg("dns_est_4")
+        || server.arg("ip_est_1") == NULL || server.arg("ip_est_2") == NULL || server.arg("ip_est_3") == NULL || server.arg("ip_est_4") == NULL
+          ||  server.arg("mascara_est_1") == NULL || server.arg("mascara_est_2") == NULL || server.arg("mascara_est_3") == NULL || server.arg("mascara_est_4") == NULL
+            || server.arg("puerta_est_1") == NULL || server.arg("puerta_est_2") == NULL || server.arg("puerta_est_3") == NULL || server.arg("puerta_est_4") == NULL
+              || server.arg("dns_est_1") == NULL || server.arg("dns_est_2") == NULL || server.arg("dns_est_3") == NULL || server.arg("ip_est_4") == NULL
+        ){
+        mensaje += "<li>NO INGRESÓ TODOS LOS DATOS PARA LOGRAR UNA IP ESTÁTICA</li>";
+        return;
       }
       else{
-        Serial.println("NO RECIBO RED");
-      }    
+        String ipEstatica[4] = {server.arg("ip_est_1"), server.arg("ip_est_2"), server.arg("ip_est_3"), server.arg("ip_est_4")};
+        String compuerta[4] = {server.arg("mascara_est_1"), server.arg("mascara_est_2"), server.arg("mascara_est_3"), server.arg("mascara_est_4")};
+        String mascara[4] = {server.arg("puerta_est_1"), server.arg("puerta_est_2"), server.arg("puerta_est_3"), server.arg("puerta_est_4")};
+        String dns[4] = {server.arg("dns_est_1"), server.arg("dns_est_2"), server.arg("dns_est_3"), server.arg("dns_est_4")};
+        Grabar(30, ipEstatica[0], 5);
+        Grabar(35, ipEstatica[1], 5);
+        Grabar(40, ipEstatica[2], 5);
+        Grabar(45, ipEstatica[3], 5);
+        Grabar(50, compuerta[0], 5);
+        Grabar(55, compuerta[1], 5);
+        Grabar(60, compuerta[2], 5);
+        Grabar(65, compuerta[3], 5);
+        Grabar(70, mascara[0], 5);
+        Grabar(75, mascara[1], 5);
+        Grabar(80, mascara[2], 5);
+        Grabar(85, mascara[3], 5);
+        Grabar(90, dns[0], 5);
+        Grabar(95, dns[1], 5);
+        Grabar(100, dns[2], 5);
+        Grabar(105, dns[3], 5);
+        Grabar(110, "estatica", 10);
+      }
     }
+    else{
+      Serial.println("NO RECIBO RED");
+    }    
+  }
 }
 
 void CambioAcceso()
@@ -362,17 +359,16 @@ void CambioMQTT()
     server.arg("prefijo_mqtt") == NULL){
       Serial.println("NO SE HA MODIFICADO EL BROKER MQTT");
       mensaje += "<li>NO SE MODIFICÓ EL BROKER MQTT</li>";
-    }
-    else{
+    }else{
       Grabar(160, server.arg("mqtt_server"), 30);
       Grabar(190, server.arg("id_client"), 30);
       Grabar(220, server.arg("usuario_mqtt"), 30);
       Grabar(250, server.arg("password_mqtt"), 30);
       Grabar(280, server.arg("prefijo_mqtt"), 30);
-      
+
       Serial.println("SE HA MODIFICADO EL BROKER MQTT");
       mensaje += "<li>SE MODIFICÓ EL BROKER MQTT</li>";
-    }
+  }
 }
 
 
@@ -386,7 +382,7 @@ void Reinicio()
 
 void ReinicioFabrica()
 {
-  Grabar(0, "0", 254);
+  Grabar(0, "0", 512);
   Serial.println("\n\n////////////////////\nREINICIO DE FÁBRICA\n////////////////////\n\n");
   ESP.restart();
 }
