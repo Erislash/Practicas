@@ -35,6 +35,9 @@ String mensaje = "";                  //MENSAJE A MOSTRAR LUEGO DE APLICAR CAMBI
 
 void setup()
 {
+  
+
+  
   EEPROM.end();
   EEPROM.begin(512);
   Serial.begin(115200);
@@ -232,6 +235,26 @@ void Acceso()
 //VALIDACIÓN DE LOS DATOS DE ACCESO
 void Configuracion()
 {
+  //ESCANEO DE LAS REDES Y LAS PASO COMO ARGUMENTO A LA FUNCIÓN DE LA CLASE PÁGINA
+   
+  
+String redes;
+String nuevaRed;
+  for(int i = 0; i < WiFi.scanNetworks(); i++){
+    String red = WiFi.SSID(i);
+   
+    if(red != nuevaRed){
+      redes += "<option value=\""+ WiFi.SSID(i) + "\">" + WiFi.SSID(i) + "</option>";
+    }
+
+    nuevaRed = red;
+  }
+  WiFi.scanDelete();
+
+  
+  Serial.println(redes);
+
+  
   Serial.printf("Usuario de acceso: ");
   Serial.println(usuario);
   Serial.printf("Contraseña de acceso: ");
@@ -242,15 +265,14 @@ void Configuracion()
     return;
   }
   if(server.arg("usuario") == usuario && server.arg("password") == passConfig){  
-//ESCANEO DE LAS REDES Y LAS PASO COMO ARGUMENTO A LA FUNCIÓN DE LA CLASE PÁGINA
-    int numeroRedes = WiFi.scanNetworks();
-    String redes[numeroRedes];
 
-    for(int i = 0; i < numeroRedes; i++){
-      redes[i] = WiFi.SSID(i).c_str();
-    }
+          Serial.println(pag.PConfiguracion(redes.c_str()));
+          
+        server.send(200, "text/html", pag.PConfiguracion(redes));
+        
+    
 
-    server.send(200, "text/html", pag.PConfiguracion(numeroRedes, redes).c_str());
+    
   }else{
     server.send(401, "text/html", pag.PMensaje("USUARIO O CONTRASEÑA INVÁLIDOS"));
   }
