@@ -6,7 +6,7 @@
 
 class Pagina{
     public:
-        String PConfiguracion(int ph_cantidadRedes, String ph_Red[]);
+        String PConfiguracion(String ph_Redes);
         String PInicio();
         String PMensaje(String ph_mensaje);
 };

@@ -84,7 +84,7 @@ void setup()
       Serial.println("\nEL SERVIDOR HA FALLADO");
     }
     server.on("/", HTTP_GET, Acceso);
-    server.on("/acceder", HTTP_POST, Configuracion);
+    server.on("/acceder", Configuracion);
     server.on("/aplicar", HTTP_POST, Cambio);
     server.on("/reiniciar", HTTP_POST, Reinicio);
     server.on("/restablecer", HTTP_POST, ReinicioFabrica);
@@ -155,6 +155,11 @@ void setup()
     Serial.print("NUEVA Direccion IP: ");
     Serial.println(WiFi.localIP());
     digitalWrite(led, LOW);
+     
+    Serial.print("Mascara: ");
+    Serial.println(WiFi.subnetMask());
+    Serial.print("Puerta de Enlace: ");
+    Serial.println(WiFi.gatewayIP());
   }
   
 
@@ -228,7 +233,7 @@ void loop()
 
 void Acceso()
 {
-   server.send(200, "text/html", pag.PInicio().c_str()); 
+  server.send(200, "text/html", pag.PInicio().c_str()); 
 }
 
 
@@ -238,21 +243,9 @@ void Configuracion()
   //ESCANEO DE LAS REDES Y LAS PASO COMO ARGUMENTO A LA FUNCIÓN DE LA CLASE PÁGINA
    
   
-String redes;
-String nuevaRed;
-  for(int i = 0; i < WiFi.scanNetworks(); i++){
-    String red = WiFi.SSID(i);
-   
-    if(red != nuevaRed){
-      redes += "<option value=\""+ WiFi.SSID(i) + "\">" + WiFi.SSID(i) + "</option>";
-    }
 
-    nuevaRed = red;
-  }
-  WiFi.scanDelete();
 
   
-  Serial.println(redes);
 
   
   Serial.printf("Usuario de acceso: ");
@@ -264,9 +257,16 @@ String nuevaRed;
     server.send(400, "text/html", pag.PMensaje("ACCESO INCOMPLETO"));
     return;
   }
+  String redes;
+  String conjunto[20];
+  boolean repetido = false;
+  for(int i = 0; i < WiFi.scanNetworks(); i++){
+    String red = WiFi.SSID(i);
+    redes += "<option value=\""+ WiFi.SSID(i) + "\">" + WiFi.SSID(i) + "</option>"; 
+  }
+  WiFi.scanDelete();
   if(server.arg("usuario") == usuario && server.arg("password") == passConfig){  
 
-          Serial.println(pag.PConfiguracion(redes.c_str()));
           
         server.send(200, "text/html", pag.PConfiguracion(redes));
         
@@ -325,8 +325,8 @@ void CambioRed()
       }
       else{
         String ipEstatica[4] = {server.arg("ip_est_1"), server.arg("ip_est_2"), server.arg("ip_est_3"), server.arg("ip_est_4")};
-        String compuerta[4] = {server.arg("mascara_est_1"), server.arg("mascara_est_2"), server.arg("mascara_est_3"), server.arg("mascara_est_4")};
-        String mascara[4] = {server.arg("puerta_est_1"), server.arg("puerta_est_2"), server.arg("puerta_est_3"), server.arg("puerta_est_4")};
+        String mascara[4] = {server.arg("mascara_est_1"), server.arg("mascara_est_2"), server.arg("mascara_est_3"), server.arg("mascara_est_4")};
+        String compuerta[4] = {server.arg("puerta_est_1"), server.arg("puerta_est_2"), server.arg("puerta_est_3"), server.arg("puerta_est_4")};
         String dns[4] = {server.arg("dns_est_1"), server.arg("dns_est_2"), server.arg("dns_est_3"), server.arg("dns_est_4")};
         Grabar(30, ipEstatica[0], 5);
         Grabar(35, ipEstatica[1], 5);

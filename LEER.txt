@@ -1,0 +1,18 @@
+-El archivo "index.html" contiene solo el diseño de la página de configuración.
+
+-La carpeta "Pagina" que contiene los archivos C (cabecera) y C++ debe copiarse en la carpeta donde el IDE Arduino busca las nuevas librerias, en mi caso: "Documentos\Arduino\libraries\".
+
+-El ESP8266 iniciará siempre en modo servidor hasta que se modifique el usuario y contraseña de acceso por defecto.
+SSID modo servidor: Node.
+CONTRASEÑA modo servidor: "esp82666".
+
+-Los datos de acceso por defecto a la pagina de configuración se asignan en las lineas 53 (usuario) y 54 (contraseña) del "Skech"(NODE.ino).
+
+-Una vez modificados los datos de acceso, una vez reiniciado el esp8266 arrancará siempre en modo cliente.
+
+-Para volver acceder al modo servidor y poder configurar el node deberá reiniciarse el esp8266 mientras se presiona el botón asignado en la linea 8 del "Sketch" (Pulsador en modo pull up por defecto, en la línea 59 puede modificarse LOW => HIGH).
+
+-Un led (Pull Up) asignado en la linea 9 servirá de indicador.
+	*titila 2 veces al arrancar = Inicio en modo servidor
+	*titila constantemente = inicio en modo cliente, intentando conectar a la red seleccionada.
+	*se queda encendido = Se logró conectar a la red seleccionada.
