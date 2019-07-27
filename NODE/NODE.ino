@@ -241,13 +241,6 @@ void Acceso()
 void Configuracion()
 {
   //ESCANEO DE LAS REDES Y LAS PASO COMO ARGUMENTO A LA FUNCIÓN DE LA CLASE PÁGINA
-   
-  
-
-
-  
-
-  
   Serial.printf("Usuario de acceso: ");
   Serial.println(usuario);
   Serial.printf("Contraseña de acceso: ");
@@ -265,14 +258,8 @@ void Configuracion()
     redes += "<option value=\""+ WiFi.SSID(i) + "\">" + WiFi.SSID(i) + "</option>"; 
   }
   WiFi.scanDelete();
-  if(server.arg("usuario") == usuario && server.arg("password") == passConfig){  
-
-          
-        server.send(200, "text/html", pag.PConfiguracion(redes));
-        
-    
-
-    
+  if(server.arg("usuario") == usuario && server.arg("password") == passConfig){    
+    server.send(200, "text/html", pag.PConfiguracion(redes));
   }else{
     server.send(401, "text/html", pag.PMensaje("USUARIO O CONTRASEÑA INVÁLIDOS"));
   }
@@ -293,13 +280,15 @@ void Cambio()
 
 void CambioRed()
 {
-  if (!server.hasArg("ssid_ap") || !server.hasArg("password_ap") || server.arg("ssid_ap") == NULL){
+  if ((!server.hasArg("ssid_ap") && !server.hasArg("ssid_ap_manual")) || !server.hasArg("password_ap") || (server.arg("ssid_ap") == NULL && server.arg("ssid_ap_manual") == NULL)){
     mensaje += "<li>NO SE MODIFICÓ LA RED</li>";
     return;
   }else if(server.hasArg("ssid_ap") && server.hasArg("password_ap")){
-    Serial.println(server.arg("ip"));
     
     String nSSID = server.arg("ssid_ap");
+    if(server.arg("ssid_ap") == "manual"){
+      nSSID = server.arg("ssid_ap_manual");
+    }
     String nPassWifi = server.arg("password_ap");
     
     Grabar(0, nSSID, 15);

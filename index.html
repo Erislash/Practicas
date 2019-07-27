@@ -73,6 +73,7 @@
   margin-bottom: 10px;
   color: #AF0F0F; }
 .contenedor .formulario form .seccion .campo{
+  
   display: flex;
   align-items: center;
   flex-direction: row;
@@ -84,9 +85,11 @@
   width: 160px;
 }
 .contenedor .formulario form .seccion .campo .red{
+  transition: all ease 0.5s;
   width: 160px;
 }
 .contenedor .formulario form .seccion .campo .sta{
+  transition: all ease 0.5s;
   width: 20%;
   -webkit-appearance: textfield;
   -moz-appearance:textfield;
@@ -105,6 +108,7 @@
   margin: 0;
 }
 .contenedor .formulario form .seccion .est{
+  transition: all ease 0.5s;
   display: flex;
   flex-direction: row;
 }
@@ -246,7 +250,7 @@
 
 
 <body>
-    <div id="light_bg" class="fondo-pop"></div>
+    <div id="light_bg" class="fondo-pop" onclick="Cerrar()"></div>
 
     <div class="contenedor">
         <h1 class="titulo"><span>CONFIGURACIÓN</span></h1>
@@ -261,19 +265,18 @@
                     <hr>
                     <div class="campo">
                         <label for="ssid_ap">SSID:</label>
-                        <!-- <input oninput="javascript: if (this.value.length > 15) this.value = this.value.slice(0, 15);" 
-                        class = "texto" type="text" name="ssid_ap" id = "ssid_ap" placeholder="SSID"> -->
+                        
 
-                        <select name="ssid_ap" id="ssid_ap" class = "red">
+                        <select onchange="RedManual()" name="ssid_ap" id="ssid_ap" class = "red">
+                          <option value="" selected="selected">NO ASIGNAR</option>
+                          <option value="manual" >MANUAL</option>
                           <option value="red1">RED 1</option>
                           <option value="red2">RED 2</option>
-                          <option value="red3">RED 3</option>
-                          <!-- 
-                            CUANDO SE USA EN EL ESP8266...
-                            for(int i = 0; i < ph_cantidadRedes; i++){
-                            html +="<option value=\"" + ph_Red[i] + "\">" + ph_Red[i] + "</option>";
-                          } -->
+                          <option value="red3" >RED 3</option>
+                          <!-- html += ph_Redes;    CUANDO SE USA EN ARDUINO-->
                         </select>
+                        <input style="display:none" oninput="javascript: if (this.value.length > 15) this.value = this.value.slice(0, 15);" 
+                        class = "texto" type="text" name="ssid_ap_manual" id = "ssid_ap_manual" placeholder="SSID MANUAL">
 
                         
                     </div>
@@ -483,6 +486,17 @@
     formEstatica.style.display = 'none';
   }
   });
+
+  function RedManual(){
+    var red = document.getElementById("ssid_ap").value;
+    var manual = document.getElementById("ssid_ap_manual");
+
+    if(red == "manual"){
+        manual.style.display = "inline-block";
+      }
+    else
+        manual.style.display = "none";
+}
 </script>
 
 
